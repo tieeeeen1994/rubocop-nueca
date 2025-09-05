@@ -1,0 +1,103 @@
+plugins:
+  - rubocop-capybara
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'config/environments/**/*'
+    - 'db/*schema.rb'
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Metrics/BlockLength:
+  CountComments: false
+  CountAsOne: [array, hash, heredoc, method_call]
+  Exclude:
+    - '**/config/routes.rb'
+    - '**/config/routes/**/*'
+
+Metrics/ClassLength:
+  CountComments: false
+  CountAsOne: [array, hash, heredoc, method_call]
+  Exclude:
+    - 'db/migrate/**/*'
+
+Metrics/MethodLength:
+  Max: 20
+  CountComments: false
+  CountAsOne: [array, hash, heredoc, method_call]
+  Exclude:
+    - 'db/migrate/**/*'
+
+Metrics/ModuleLength:
+  CountComments: false
+  CountAsOne: [array, hash, heredoc, method_call]
+
+Naming/PredicateMethod:
+  AllowedMethods:
+    - call
+    - data
+    - action
+
+Naming/AccessorMethodName:
+  Exclude:
+    - 'app/datatables/**/*'
+
+Lint/MissingSuper:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
+Metrics/AbcSize:
+  Max: 21
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
+
+RSpec/SharedExamples:
+  EnforcedStyle: symbol
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+
+RSpec/NestedGroups:
+  Max: 5
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+Rails/HelperInstanceVariable:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Environments:
+    - production
+    - development
+    - test
+    - staging
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Rails/CreateTableWithTimestamps:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

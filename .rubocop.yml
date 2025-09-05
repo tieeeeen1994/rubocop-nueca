@@ -1,8 +1,6 @@
-AllCops:
-  TargetRubyVersion: 3.2
+plugins:
+  - rubocop-nueca
 
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-
-Style/StringLiteralsInInterpolation:
-  EnforcedStyle: double_quotes
+Naming/FileName:
+  Exclude:
+    - lib/rubocop-nueca.rb

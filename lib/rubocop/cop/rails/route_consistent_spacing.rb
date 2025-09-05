@@ -1,0 +1,64 @@
+# frozen_string_literal: true
+
+require_relative '../shared/route_collector'
+
+module RuboCop
+  module Cop
+    module Rails
+      class RouteConsistentSpacing < RuboCop::Cop::Base
+        MSG = 'Do not leave blank lines between routes of the same type at the same namespace level.'
+
+        def on_block(node)
+          return unless rails_routes_draw_block?(node)
+
+          routes = collect_routes(node)
+          return if routes.size < 2
+
+          check_consistent_spacing(routes)
+        end
+
+        private
+
+        def rails_routes_draw_block?(node)
+          return false unless node.block_type?
+
+          send_node = node.send_node
+          receiver = send_node.receiver
+          return false unless receiver
+
+          receiver.source == 'Rails.application.routes' && send_node.method_name == :draw
+        end
+
+        def collect_routes(routes_block)
+          collector = RouteCollector.new
+          body = routes_block.body
+          collector.collect(body) if body
+          collector.routes.sort_by { |route| route[:line] }
+        end
+
+        def check_consistent_spacing(routes)
+          routes.each_with_index do |current_route, index|
+            next_route = routes[index + 1]
+            next unless next_route
+            next unless same_type_and_level?(current_route, next_route)
+
+            add_offense(next_route[:node], message: MSG) if blank_line_between?(current_route, next_route)
+          end
+        end
+
+        def same_type_and_level?(current_route, next_route)
+          current_route[:type] == next_route[:type] &&
+            current_route[:namespace_level] == next_route[:namespace_level]
+        end
+
+        def blank_line_between?(current_route, next_route)
+          current_end_line = current_route[:end_line]
+          next_start_line = next_route[:line]
+          lines_between = next_start_line - current_end_line - 1
+
+          lines_between >= 1
+        end
+      end
+    end
+  end
+end

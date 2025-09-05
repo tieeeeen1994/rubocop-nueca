@@ -19,9 +19,6 @@ Add to your `.rubocop.yml` the following code.
 ```yaml
 plugins:
     - rubocop-nueca
-
-inherit_gem:
-    rubocop-nueca: config/default.yml
 ```
 
 ## License
