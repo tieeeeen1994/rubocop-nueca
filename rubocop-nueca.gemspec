@@ -5,17 +5,14 @@ require_relative 'lib/rubocop/nueca/version'
 Gem::Specification.new do |spec|
   spec.name = 'rubocop-nueca'
   spec.version = RuboCop::Nueca::VERSION
-  spec.authors = ['TODO: Write your name']
-  spec.email = ['TODO: Write your email address']
+  spec.authors = ['Tien']
+  spec.email = ['tieeeeen1994@gmail.com']
 
-  spec.summary = 'TODO: Write a short summary, because RubyGems requires one.'
-  spec.description = 'TODO: Write a longer description or delete this line.'
+  spec.summary = 'This enforces custom rules for Nueca according to culture.'
   spec.homepage = 'https://github.com/tieeeeen1994/rubocop-nueca'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.2.0'
 
-  spec.metadata['allowed_push_host'] = "TODO: Set to your gem server 'https://example.com'"
-  spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/tieeeeen1994/rubocop-nueca'
   spec.metadata['rubygems_mfa_required'] = 'true'
 
@@ -37,14 +34,14 @@ Gem::Specification.new do |spec|
   spec.metadata['rubocop_extension'] = 'true'
 
   # Dependencies
-  spec.add_dependency 'lint_roller'
-  spec.add_dependency 'rubocop', '>= 1.72.0'
-  spec.add_dependency 'rubocop-capybara'
-  spec.add_dependency 'rubocop-factory_bot'
-  spec.add_dependency 'rubocop-performance'
-  spec.add_dependency 'rubocop-rails'
-  spec.add_dependency 'rubocop-rspec'
-  spec.add_dependency 'rubocop-rspec_rails'
+  spec.add_dependency 'lint_roller', '~> 1.1'
+  spec.add_dependency 'rubocop', '~> 1.72', '>= 1.72.0'
+  spec.add_dependency 'rubocop-capybara', '~> 2.22'
+  spec.add_dependency 'rubocop-factory_bot', '~> 2.27'
+  spec.add_dependency 'rubocop-performance', '~> 1.25'
+  spec.add_dependency 'rubocop-rails', '~> 2.33'
+  spec.add_dependency 'rubocop-rspec', '~> 3.7'
+  spec.add_dependency 'rubocop-rspec_rails', '~> 2.31'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
