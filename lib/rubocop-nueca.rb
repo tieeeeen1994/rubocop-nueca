@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'nueca/version'
+require_relative 'rubocop/nueca/version'
 require 'rubocop'
 
 # Load the plugin
