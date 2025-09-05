@@ -34,15 +34,18 @@ Gem::Specification.new do |spec|
 
   # Plugin configuration
   spec.metadata['default_lint_roller_plugin'] = 'RuboCop::Nueca::Plugin'
+  spec.metadata['rubocop_extension'] = 'true'
 
   # Dependencies
   spec.add_dependency 'lint_roller'
   spec.add_dependency 'rubocop', '>= 1.72.0'
   spec.add_dependency 'rubocop-capybara'
+  spec.add_dependency 'rubocop-factory_bot'
+  spec.add_dependency 'rubocop-performance'
   spec.add_dependency 'rubocop-rails'
   spec.add_dependency 'rubocop-rspec'
+  spec.add_dependency 'rubocop-rspec_rails'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
-  spec.metadata['rubocop_extension'] = 'true'
 end
