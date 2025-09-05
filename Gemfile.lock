@@ -2,14 +2,14 @@ PATH
   remote: .
   specs:
     rubocop-nueca (1.0.0)
-      lint_roller
-      rubocop (>= 1.72.0)
-      rubocop-capybara
-      rubocop-factory_bot
-      rubocop-performance
-      rubocop-rails
-      rubocop-rspec
-      rubocop-rspec_rails
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.0)
+      rubocop-capybara (~> 2.22)
+      rubocop-factory_bot (~> 2.27)
+      rubocop-performance (~> 1.25)
+      rubocop-rails (~> 2.33)
+      rubocop-rspec (~> 3.7)
+      rubocop-rspec_rails (~> 2.31)
 
 GEM
   remote: https://rubygems.org/
