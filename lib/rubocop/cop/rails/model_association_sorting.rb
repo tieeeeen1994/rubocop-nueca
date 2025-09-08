@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module Rails
-      class ModelAssociationSorting < RuboCop::Cop::Base
+      class ModelAssociationSorting < RuboCop::Cop::Base # rubocop:disable Metrics/ClassLength
         MSG = 'Sort associations of the same type alphabetically. Expected order: %<expected>s.'
         ASSOCIATION_METHODS = [
           :belongs_to,
@@ -93,14 +93,11 @@ module RuboCop
         end
 
         def check_group_sorting(group_associations)
-          # Separate associations with and without through
           through_associations = group_associations.select { |assoc| assoc[:through] }
           regular_associations = group_associations.reject { |assoc| assoc[:through] }
 
-          # Sort regular associations alphabetically
           regular_sorted = regular_associations.sort_by { |assoc| assoc[:name] }
 
-          # Build expected order respecting through dependencies
           expected_order = build_expected_order(regular_sorted, through_associations)
           actual_order = group_associations.map { |assoc| assoc[:name] }
 
@@ -113,28 +110,67 @@ module RuboCop
         end
 
         def build_expected_order(regular_associations, through_associations)
-          expected = []
+          all_associations = regular_associations + through_associations
+          association_lookup = build_association_lookup(all_associations)
+          dependency_graph = build_dependency_graph(all_associations, association_lookup)
 
-          # Add regular associations first, sorted alphabetically
-          regular_associations.each do |assoc|
-            expected << assoc[:name]
+          topological_sort_alphabetically(dependency_graph, all_associations.map { |a| a[:name] })
+        end
 
-            # Add any through associations that depend on this one
-            dependent_through = through_associations.select { |ta| ta[:through] == assoc[:name] }
-            dependent_through.sort_by { |ta| ta[:name] }.each do |ta|
-              expected << ta[:name]
-            end
+        def build_association_lookup(associations)
+          associations.index_by { |assoc| assoc[:name] }
+        end
+
+        def build_dependency_graph(associations, lookup)
+          graph = associations.each_with_object({}) { |assoc, deps| deps[assoc[:name]] = [] }
+
+          associations.each do |assoc|
+            graph[assoc[:through]] << assoc[:name] if assoc[:through] && lookup[assoc[:through]]
           end
 
-          # Add any through associations that don't have dependencies in this group
-          orphaned_through = through_associations.reject do |ta|
-            regular_associations.any? { |ra| ra[:name] == ta[:through] }
-          end
-          orphaned_through.sort_by { |ta| ta[:name] }.each do |ta|
-            expected << ta[:name]
+          graph
+        end
+
+        def topological_sort_alphabetically(dependency_graph, all_nodes)
+          in_degrees = calculate_in_degrees(dependency_graph, all_nodes)
+          available_nodes = nodes_with_zero_dependencies(in_degrees)
+          result = []
+
+          until available_nodes.empty?
+            current = available_nodes.shift
+            result << current
+
+            process_dependents(current, dependency_graph, in_degrees, available_nodes)
           end
 
-          expected
+          result
+        end
+
+        def calculate_in_degrees(dependency_graph, all_nodes)
+          in_degrees = all_nodes.each_with_object({}) { |node, degrees| degrees[node] = 0 }
+
+          dependency_graph.each_value do |dependents|
+            dependents.each { |dependent| in_degrees[dependent] += 1 }
+          end
+
+          in_degrees
+        end
+
+        def nodes_with_zero_dependencies(in_degrees)
+          in_degrees.select { |_node, degree| degree.zero? }.keys.sort
+        end
+
+        def process_dependents(current_node, dependency_graph, in_degrees, available_nodes)
+          dependency_graph[current_node]&.each do |dependent|
+            in_degrees[dependent] -= 1
+
+            insert_alphabetically(available_nodes, dependent) if in_degrees[dependent].zero?
+          end
+        end
+
+        def insert_alphabetically(sorted_array, element)
+          insert_position = sorted_array.bsearch_index { |x| x > element } || sorted_array.length
+          sorted_array.insert(insert_position, element)
         end
       end
     end
