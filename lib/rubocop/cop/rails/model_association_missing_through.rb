@@ -7,6 +7,7 @@ module RuboCop
         MSG = 'Association %<association>s references through %<through>s, ' \
               'but %<through>s is not defined in this model.'
         ASSOCIATION_METHODS = [
+          :belongs_to,
           :has_one,
           :has_many,
           :has_and_belongs_to_many
