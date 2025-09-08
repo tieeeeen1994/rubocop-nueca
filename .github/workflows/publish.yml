@@ -1,0 +1,52 @@
+name: Publish Gem
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0'
+        bundler-cache: true
+
+    - name: Get gem version
+      id: gem_version
+      run: |
+        VERSION=$(ruby -e "require './lib/rubocop/nueca/version'; puts RuboCop::Nueca::VERSION")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Check if version exists on RubyGems
+      id: version_check
+      run: |
+        if gem list -r rubocop-nueca | grep -q "${{ steps.gem_version.outputs.version }}"; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Build gem
+      if: steps.version_check.outputs.exists == 'false'
+      run: gem build *.gemspec
+
+    - name: Publish to RubyGems
+      if: steps.version_check.outputs.exists == 'false'
+      run: |
+        mkdir -p $HOME/.gem
+        touch $HOME/.gem/credentials
+        chmod 0600 $HOME/.gem/credentials
+        printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+        gem push *.gem
+      env:
+        GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_AUTH_TOKEN }}
+
+    - name: Skip publishing
+      if: steps.version_check.outputs.exists == 'true'
+      run: echo "Version ${{ steps.gem_version.outputs.version }} already exists on RubyGems. Skipping publish."
