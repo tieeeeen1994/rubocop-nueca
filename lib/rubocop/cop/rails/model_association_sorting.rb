@@ -118,7 +118,7 @@ module RuboCop
         end
 
         def build_association_lookup(associations)
-          associations.index_by { |assoc| assoc[:name] }
+          associations.each_with_object({}) { |assoc, lookup| lookup[assoc[:name]] = assoc } # rubocop:disable Rails/IndexBy
         end
 
         def build_dependency_graph(associations, lookup)
