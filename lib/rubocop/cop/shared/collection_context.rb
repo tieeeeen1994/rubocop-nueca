@@ -3,8 +3,7 @@
 module RuboCop
   module Cop
     module Rails
-      # rubocop:disable Metrics/ClassLength
-      class CollectionContext
+      class CollectionContext # rubocop:disable Metrics/ClassLength
         ROUTE_CATEGORIES = {
           simple: [:get, :post, :put, :patch, :delete, :head, :options, :match, :root],
           resource: [:resource, :resources],
@@ -45,12 +44,8 @@ module RuboCop
           send_node = node.send_node
           return unless send_node.send_type? && route_method?(send_node)
 
-          if [:member, :collection].include?(send_node.method_name)
-            process_nested_context(node)
-          else
-            add_route_block_if_valid(node)
-            process_nested_context(node)
-          end
+          add_route_block_if_valid(node) unless [:member, :collection].include?(send_node.method_name)
+          process_nested_context(node)
         end
 
         def add_route_block_if_valid(node)
@@ -72,22 +67,39 @@ module RuboCop
 
         def build_namespace_path(send_node)
           new_namespace_path = @namespace_path.dup
+          method_name = send_node.method_name
 
-          case send_node.method_name
+          case method_name
           when :namespace
-            namespace_name = extract_namespace_name(send_node)
-            new_namespace_path << namespace_name if namespace_name
+            add_namespace_to_path(new_namespace_path, send_node)
           when :scope
-            scope_name = extract_scope_name(send_node)
-            new_namespace_path << scope_name if scope_name
+            add_scope_to_path(new_namespace_path, send_node)
           when :resources, :resource
-            resource_name = extract_namespace_name(send_node)
-            new_namespace_path << resource_name if resource_name
+            add_resource_to_path(new_namespace_path, send_node)
           when :member, :collection
-            new_namespace_path << send_node.method_name.to_s
+            add_member_collection_to_path(new_namespace_path, method_name)
           end
 
           new_namespace_path
+        end
+
+        def add_namespace_to_path(path, node)
+          namespace_name = extract_namespace_name(node)
+          path << namespace_name if namespace_name
+        end
+
+        def add_scope_to_path(path, node)
+          scope_name = extract_scope_name(node)
+          path << scope_name if scope_name
+        end
+
+        def add_resource_to_path(path, node)
+          resource_name = extract_namespace_name(node)
+          path << resource_name if resource_name
+        end
+
+        def add_member_collection_to_path(path, method_name)
+          path << method_name.to_s
         end
 
         def extract_namespace_name(node)
@@ -227,7 +239,6 @@ module RuboCop
           :other
         end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end
