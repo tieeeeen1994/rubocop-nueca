@@ -1,39 +1,27 @@
 # frozen_string_literal: true
 
-require_relative '../shared/route_collector'
+require_relative '../shared/route_helper'
 
 module RuboCop
   module Cop
     module Rails
       class RouteConsistentSpacing < RuboCop::Cop::Base
+        include RouteHelper
+
         MSG = 'Do not leave blank lines between routes of the same type at the same namespace level.'
 
         def on_block(node)
-          return unless rails_routes_draw_block?(node)
+          process_route_block(node)
+        end
 
-          routes = collect_routes(node)
-          return if routes.size < 2
-
-          check_consistent_spacing(routes)
+        def investigate(processed_source)
+          process_route_file(processed_source)
         end
 
         private
 
-        def rails_routes_draw_block?(node)
-          return false unless node.block_type?
-
-          send_node = node.send_node
-          receiver = send_node.receiver
-          return false unless receiver
-
-          receiver.source == 'Rails.application.routes' && send_node.method_name == :draw
-        end
-
-        def collect_routes(routes_block)
-          collector = RouteCollector.new
-          body = routes_block.body
-          collector.collect(body) if body
-          collector.routes.sort_by { |route| route[:line] }
+        def check_routes(routes)
+          check_consistent_spacing(routes)
         end
 
         def check_consistent_spacing(routes)

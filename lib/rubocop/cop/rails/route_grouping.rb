@@ -1,39 +1,27 @@
 # frozen_string_literal: true
 
-require_relative '../shared/route_collector'
+require_relative '../shared/route_helper'
 
 module RuboCop
   module Cop
     module Rails
       class RouteGrouping < RuboCop::Cop::Base
+        include RouteHelper
+
         MSG = 'Group routes by type. Keep simple routes, resources, and namespaces grouped together.'
 
         def on_block(node)
-          return unless rails_routes_draw_block?(node)
+          process_route_block(node)
+        end
 
-          routes = collect_routes(node)
-          return if routes.size < 2
-
-          check_for_scattered_routes(routes)
+        def investigate(processed_source)
+          process_route_file(processed_source)
         end
 
         private
 
-        def rails_routes_draw_block?(node)
-          return false unless node.block_type?
-
-          send_node = node.send_node
-          receiver = send_node.receiver
-          return false unless receiver
-
-          receiver.source == 'Rails.application.routes' && send_node.method_name == :draw
-        end
-
-        def collect_routes(routes_block)
-          collector = RouteCollector.new
-          body = routes_block.body
-          collector.collect(body) if body
-          collector.routes.sort_by { |route| route[:line] }
+        def check_routes(routes)
+          check_for_scattered_routes(routes)
         end
 
         def check_for_scattered_routes(routes)

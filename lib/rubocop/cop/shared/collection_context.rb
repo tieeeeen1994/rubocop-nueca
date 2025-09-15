@@ -3,6 +3,7 @@
 module RuboCop
   module Cop
     module Rails
+      # rubocop:disable Metrics/ClassLength
       class CollectionContext
         ROUTE_CATEGORIES = {
           simple: [:get, :post, :put, :patch, :delete, :head, :options, :match, :root],
@@ -12,6 +13,7 @@ module RuboCop
         }.freeze
 
         ALL_ROUTE_METHODS = ROUTE_CATEGORIES.values.flatten.freeze
+        SCOPE_OPTIONS = [:module, :path].freeze
 
         def initialize(collector, namespace_level, namespace_path = [])
           @collector = collector
@@ -44,18 +46,31 @@ module RuboCop
           return unless send_node.send_type? && route_method?(send_node)
 
           add_route_if_valid(send_node)
+          process_nested_context(node)
+        end
 
+        def process_nested_context(node)
           body = node.body
           return unless body
 
-          new_namespace_path = @namespace_path.dup
-          if send_node.method_name == :namespace
-            namespace_name = extract_namespace_name(send_node)
-            new_namespace_path << namespace_name if namespace_name
-          end
-
+          new_namespace_path = build_namespace_path(node.send_node)
           nested_context = CollectionContext.new(@collector, @namespace_level + 1, new_namespace_path)
           nested_context.process_node(body)
+        end
+
+        def build_namespace_path(send_node)
+          new_namespace_path = @namespace_path.dup
+
+          case send_node.method_name
+          when :namespace
+            namespace_name = extract_namespace_name(send_node)
+            new_namespace_path << namespace_name if namespace_name
+          when :scope
+            scope_name = extract_scope_name(send_node)
+            new_namespace_path << scope_name if scope_name
+          end
+
+          new_namespace_path
         end
 
         def extract_namespace_name(node)
@@ -63,6 +78,47 @@ module RuboCop
           return first_arg.value.to_s if first_arg&.sym_type? || first_arg&.str_type?
 
           'unknown'
+        end
+
+        def extract_scope_name(node)
+          scope_name = extract_scope_option_value(node)
+          return scope_name if scope_name
+
+          # If no module/path specified, use first argument if it's a symbol/string
+          first_arg = node.arguments.first
+          return first_arg.value.to_s if first_arg&.sym_type? || first_arg&.str_type?
+
+          'scope'
+        end
+
+        def extract_scope_option_value(node)
+          node.arguments.each do |arg|
+            next unless arg.hash_type?
+
+            scope_value = find_scope_option_in_hash(arg)
+            return scope_value if scope_value
+          end
+
+          nil
+        end
+
+        def find_scope_option_in_hash(hash_arg)
+          hash_arg.pairs.each do |pair|
+            value = extract_scope_value_from_pair(pair)
+            return value if value
+          end
+
+          nil
+        end
+
+        def extract_scope_value_from_pair(pair)
+          key = pair.key
+          return nil unless key&.sym_type? && SCOPE_OPTIONS.include?(key.value)
+
+          value = pair.value
+          return value.value.to_s if value&.sym_type? || value&.str_type?
+
+          nil
         end
 
         def route_method?(node)
@@ -134,6 +190,7 @@ module RuboCop
           :other
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end

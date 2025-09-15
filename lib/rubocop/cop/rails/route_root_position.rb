@@ -1,39 +1,33 @@
 # frozen_string_literal: true
 
-require_relative '../shared/route_collector'
+require_relative '../shared/route_helper'
 
 module RuboCop
   module Cop
     module Rails
       class RouteRootPosition < RuboCop::Cop::Base
+        include RouteHelper
+
         MSG = 'The root route should be positioned at the top of routes within the same namespace level.'
 
         def on_block(node)
-          return unless rails_routes_draw_block?(node)
+          process_route_block(node)
+        end
 
-          routes = collect_routes(node)
-          return if routes.empty?
-
-          check_root_position(routes)
+        def investigate(processed_source)
+          process_route_file(processed_source)
         end
 
         private
 
-        def rails_routes_draw_block?(node)
-          return false unless node.block_type?
-
-          send_node = node.send_node
-          receiver = send_node.receiver
-          return false unless receiver
-
-          receiver.source == 'Rails.application.routes' && send_node.method_name == :draw
+        def minimum_routes_for_check
+          0
         end
 
-        def collect_routes(routes_block)
-          collector = RouteCollector.new
-          body = routes_block.body
-          collector.collect(body) if body
-          collector.routes.sort_by { |route| route[:line] }
+        def check_routes(routes)
+          return if routes.empty?
+
+          check_root_position(routes)
         end
 
         def check_root_position(routes)
