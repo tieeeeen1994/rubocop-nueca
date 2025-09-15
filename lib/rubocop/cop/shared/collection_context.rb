@@ -8,7 +8,7 @@ module RuboCop
         ROUTE_CATEGORIES = {
           simple: [:get, :post, :put, :patch, :delete, :head, :options, :match, :root],
           resource: [:resource, :resources],
-          namespace: [:namespace, :scope, :concern],
+          namespace: [:namespace, :scope, :concern, :member, :collection],
           draw: [:draw]
         }.freeze
 
@@ -45,8 +45,12 @@ module RuboCop
           send_node = node.send_node
           return unless send_node.send_type? && route_method?(send_node)
 
-          add_route_block_if_valid(node)
-          process_nested_context(node)
+          if [:member, :collection].include?(send_node.method_name)
+            process_nested_context(node)
+          else
+            add_route_block_if_valid(node)
+            process_nested_context(node)
+          end
         end
 
         def add_route_block_if_valid(node)
@@ -77,9 +81,10 @@ module RuboCop
             scope_name = extract_scope_name(send_node)
             new_namespace_path << scope_name if scope_name
           when :resources, :resource
-            # For nested resources, add the resource name to the path
             resource_name = extract_namespace_name(send_node)
             new_namespace_path << resource_name if resource_name
+          when :member, :collection
+            new_namespace_path << send_node.method_name.to_s
           end
 
           new_namespace_path
@@ -96,7 +101,6 @@ module RuboCop
           scope_name = extract_scope_option_value(node)
           return scope_name if scope_name
 
-          # If no module/path specified, use first argument if it's a symbol/string
           first_arg = node.arguments.first
           return first_arg.value.to_s if first_arg&.sym_type? || first_arg&.str_type?
 
@@ -177,7 +181,7 @@ module RuboCop
             method: method_name,
             name: route_name,
             line: send_range.line,
-            end_line: block_range.last_line, # Use the block's end line instead of send node's
+            end_line: block_range.last_line,
             namespace_level: @namespace_level,
             namespace_path: @namespace_path.dup,
             type: categorize_route_method(method_name)
@@ -205,6 +209,7 @@ module RuboCop
 
         def extract_simple_route_name(first_arg)
           return first_arg.value.to_s if first_arg&.str_type?
+          return first_arg.value.to_s if first_arg&.sym_type?
           return extract_hash_route_name(first_arg) if first_arg&.hash_type?
 
           'unknown'
