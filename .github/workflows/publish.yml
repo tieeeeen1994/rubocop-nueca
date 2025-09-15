@@ -1,12 +1,16 @@
 name: Publish Gem
 
 on:
-  push:
+  workflow_run:
+    workflows: ["RuboCop"]
+    types:
+      - completed
     branches: [ master ]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
     - uses: actions/checkout@v4
