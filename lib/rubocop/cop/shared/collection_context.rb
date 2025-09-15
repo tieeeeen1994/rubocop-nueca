@@ -45,8 +45,16 @@ module RuboCop
           send_node = node.send_node
           return unless send_node.send_type? && route_method?(send_node)
 
-          add_route_if_valid(send_node)
+          add_route_block_if_valid(node)
           process_nested_context(node)
+        end
+
+        def add_route_block_if_valid(node)
+          send_node = node.send_node
+          return unless route_method?(send_node)
+
+          route_info = build_route_info_from_block(node)
+          @collector.add_route(route_info) if route_info
         end
 
         def process_nested_context(node)
@@ -68,6 +76,10 @@ module RuboCop
           when :scope
             scope_name = extract_scope_name(send_node)
             new_namespace_path << scope_name if scope_name
+          when :resources, :resource
+            # For nested resources, add the resource name to the path
+            resource_name = extract_namespace_name(send_node)
+            new_namespace_path << resource_name if resource_name
           end
 
           new_namespace_path
@@ -146,6 +158,26 @@ module RuboCop
             name: route_name,
             line: source_range.line,
             end_line: source_range.last_line,
+            namespace_level: @namespace_level,
+            namespace_path: @namespace_path.dup,
+            type: categorize_route_method(method_name)
+          }
+        end
+
+        def build_route_info_from_block(block_node)
+          send_node = block_node.send_node
+          method_name = send_node.method_name
+          route_name = extract_route_name(send_node)
+          return nil unless route_name
+
+          send_range = send_node.source_range
+          block_range = block_node.source_range
+          {
+            node: send_node,
+            method: method_name,
+            name: route_name,
+            line: send_range.line,
+            end_line: block_range.last_line, # Use the block's end line instead of send node's
             namespace_level: @namespace_level,
             namespace_path: @namespace_path.dup,
             type: categorize_route_method(method_name)
