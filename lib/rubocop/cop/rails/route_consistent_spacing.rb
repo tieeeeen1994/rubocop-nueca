@@ -36,7 +36,8 @@ module RuboCop
 
         def same_type_and_level?(current_route, next_route)
           current_route[:type] == next_route[:type] &&
-            current_route[:namespace_level] == next_route[:namespace_level]
+            current_route[:namespace_level] == next_route[:namespace_level] &&
+            current_route[:namespace_path] == next_route[:namespace_path]
         end
 
         def blank_line_between?(current_route, next_route)
