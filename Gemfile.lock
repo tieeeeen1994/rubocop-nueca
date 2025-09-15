@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-nueca (1.1.6)
+    rubocop-nueca (1.2.2)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.0)
       rubocop-capybara (~> 2.22)
@@ -55,7 +55,7 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.4.0)
+    prism (1.5.1)
     psych (5.2.6)
       date
       stringio
@@ -110,9 +110,9 @@ GEM
     stringio (3.1.7)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (3.1.5)
-      unicode-emoji (~> 4.0, >= 4.0.4)
-    unicode-emoji (4.0.4)
+    unicode-display_width (3.2.0)
+      unicode-emoji (~> 4.1)
+    unicode-emoji (4.1.0)
     uri (1.0.3)
 
 PLATFORMS
