@@ -3,8 +3,7 @@
 module RuboCop
   module Cop
     module Rails
-      # rubocop:disable Metrics/ClassLength
-      class CollectionContext
+      class CollectionContext # rubocop:disable Metrics/ClassLength
         ROUTE_CATEGORIES = {
           simple: [:get, :post, :put, :patch, :delete, :head, :options, :match, :root],
           resource: [:resource, :resources],
@@ -45,8 +44,16 @@ module RuboCop
           send_node = node.send_node
           return unless send_node.send_type? && route_method?(send_node)
 
-          add_route_if_valid(send_node)
+          add_route_block_if_valid(node)
           process_nested_context(node)
+        end
+
+        def add_route_block_if_valid(node)
+          send_node = node.send_node
+          return unless route_method?(send_node)
+
+          route_info = build_route_info_from_block(node)
+          @collector.add_route(route_info) if route_info
         end
 
         def process_nested_context(node)
@@ -84,7 +91,6 @@ module RuboCop
           scope_name = extract_scope_option_value(node)
           return scope_name if scope_name
 
-          # If no module/path specified, use first argument if it's a symbol/string
           first_arg = node.arguments.first
           return first_arg.value.to_s if first_arg&.sym_type? || first_arg&.str_type?
 
@@ -152,6 +158,26 @@ module RuboCop
           }
         end
 
+        def build_route_info_from_block(block_node)
+          send_node = block_node.send_node
+          method_name = send_node.method_name
+          route_name = extract_route_name(send_node)
+          return nil unless route_name
+
+          send_range = send_node.source_range
+          block_range = block_node.source_range
+          {
+            node: send_node,
+            method: method_name,
+            name: route_name,
+            line: send_range.line,
+            end_line: block_range.last_line,
+            namespace_level: @namespace_level,
+            namespace_path: @namespace_path.dup,
+            type: categorize_route_method(method_name)
+          }
+        end
+
         def extract_route_name(node)
           method_name = node.method_name
           first_arg = node.arguments.first
@@ -190,7 +216,6 @@ module RuboCop
           :other
         end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end
