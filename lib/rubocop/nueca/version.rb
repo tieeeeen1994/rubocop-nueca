@@ -2,6 +2,6 @@
 
 module RuboCop
   module Nueca
-    VERSION = '1.1.6'
+    VERSION = '1.2.2'
   end
 end
