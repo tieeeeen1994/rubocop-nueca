@@ -29,7 +29,7 @@ module RuboCop
 
         def on_send(node)
           buffer = node.source_range.source_buffer
-          return unless buffer.name.include?('_spec.rb')
+          return if buffer.name.exclude?('_spec.rb')
           return unless require_mongoid_helper(node)
 
           root_node = processed_source.ast

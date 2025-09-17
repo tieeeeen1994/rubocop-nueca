@@ -60,7 +60,7 @@ module RuboCop
             prev_end_line = prev_assoc.loc.last_line
             curr_start_line = curr_assoc.loc.line
 
-            next unless curr_start_line - prev_end_line > 1
+            next if curr_start_line - prev_end_line <= 1
 
             add_offense(curr_assoc, message: MSG)
           end
