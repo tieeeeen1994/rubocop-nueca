@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-nueca (1.2.6)
+    rubocop-nueca (2.0.0)
       lint_roller
       rubocop
       rubocop-capybara
