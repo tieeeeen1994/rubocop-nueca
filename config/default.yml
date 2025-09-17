@@ -166,9 +166,6 @@ Style/ClassMethodsDefinitions:
 Style/ImplicitRuntimeError:
   Enabled: true
 
-Style/InvertibleUnlessCondition:
-  Enabled: true
-
 Style/IpAddresses:
   Enabled: true
 
