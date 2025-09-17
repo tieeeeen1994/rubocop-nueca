@@ -13,7 +13,7 @@ module RuboCop
         PATTERN
 
         def on_send(node)
-          return if node.source_range.source_buffer.name.exclude?('_spec.rb')
+          return unless node.source_range.source_buffer.name.include?('_spec.rb')
           return unless datetime_usage(node)
 
           add_offense(node)

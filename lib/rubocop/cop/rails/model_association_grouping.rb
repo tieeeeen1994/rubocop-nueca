@@ -67,7 +67,7 @@ module RuboCop
         def check_same_type_grouping(same_type_associations, all_associations)
           groups = find_contiguous_groups(same_type_associations, all_associations)
 
-          return if groups.length <= 1
+          return unless groups.length > 1
 
           groups[1..].each do |group|
             add_offense(group.first, message: MSG)
@@ -99,7 +99,7 @@ module RuboCop
         end
 
         def finalize_group(groups, current_group)
-          return if current_group.none?
+          return unless current_group.any?
 
           groups << current_group.dup
           current_group.clear

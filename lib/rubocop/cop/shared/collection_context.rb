@@ -44,7 +44,7 @@ module RuboCop
           send_node = node.send_node
           return unless send_node.send_type? && route_method?(send_node)
 
-          add_route_block_if_valid(node) if [:member, :collection].exclude?(send_node.method_name)
+          add_route_block_if_valid(node) unless [:member, :collection].include?(send_node.method_name)
           process_nested_context(node)
         end
 
