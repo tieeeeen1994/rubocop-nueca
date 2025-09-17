@@ -4,3 +4,6 @@ plugins:
 Naming/FileName:
   Exclude:
     - lib/rubocop-nueca.rb
+
+Gemspec/DependencyVersion:
+  Enabled: false

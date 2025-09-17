@@ -104,3 +104,89 @@ Rails/CreateTableWithTimestamps:
 
 Style/Documentation:
   Enabled: false
+
+Capybara/AmbiguousClick:
+  Enabled: true
+
+Layout/HeredocArgumentClosingParenthesis:
+  Enabled: true
+
+Lint/HeredocMethodCallPosition:
+  Enabled: true
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: true
+
+Performance/BlockGivenWithExplicitBlock:
+  Enabled: true
+
+Performance/CaseWhenSplat:
+  Enabled: true
+
+Performance/ChainArrayAllocation:
+  Enabled: true
+
+Performance/IoReadlines:
+  Enabled: true
+
+Performance/OpenStruct:
+  Enabled: true
+
+RSpec/DescribedClassModuleWrapping:
+  Enabled: true
+
+RSpec/Pending:
+  Enabled: false
+
+RSpec/RepeatedExample:
+  Enabled: true
+
+Rails/DefaultScope:
+  Enabled: true
+
+Rails/OrderById:
+  Enabled: true
+
+Rails/PluckId:
+  Enabled: true
+
+Rails/RequireDependency:
+  Enabled: true
+
+Rails/UnusedIgnoredColumns:
+  Enabled: true
+
+Style/AutoResourceCleanup:
+  Enabled: true
+
+Style/ClassMethodsDefinitions:
+  Enabled: true
+  EnforcedStyle: self_class
+
+Style/ImplicitRuntimeError:
+  Enabled: true
+
+Style/InvertibleUnlessCondition:
+  Enabled: true
+
+Style/IpAddresses:
+  Enabled: true
+
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+
+Style/OptionHash:
+  Enabled: true
+
+Style/StaticClass:
+  Enabled: true
+
+Style/StringMethods:
+  Enabled: true
+
+Style/TopLevelMethodDefinition:
+  Enabled: true
+
+Style/TrailingCommaInBlockArgs:
+  Enabled: true
+  EnforcedStyleForMultiline: no_comma

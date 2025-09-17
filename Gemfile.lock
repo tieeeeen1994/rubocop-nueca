@@ -2,14 +2,14 @@ PATH
   remote: .
   specs:
     rubocop-nueca (1.2.6)
-      lint_roller (~> 1.1)
-      rubocop (~> 1.72, >= 1.72.0)
-      rubocop-capybara (~> 2.22)
-      rubocop-factory_bot (~> 2.27)
-      rubocop-performance (~> 1.25)
-      rubocop-rails (~> 2.33)
-      rubocop-rspec (~> 3.7)
-      rubocop-rspec_rails (~> 2.31)
+      lint_roller
+      rubocop
+      rubocop-capybara
+      rubocop-factory_bot
+      rubocop-performance
+      rubocop-rails
+      rubocop-rspec
+      rubocop-rspec_rails
 
 GEM
   remote: https://rubygems.org/
@@ -65,7 +65,7 @@ GEM
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
-    regexp_parser (2.11.2)
+    regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
     rubocop (1.80.2)

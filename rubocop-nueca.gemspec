@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
   gemspec = File.basename(__FILE__)
   spec.files = IO.popen(['git', 'ls-files', '-z'], chdir: __dir__, err: IO::NULL) do |ls|
-    ls.readlines("\x0", chomp: true).reject do |f|
+    ls.each_line("\x0", chomp: true).reject do |f|
       (f == gemspec) ||
         f.start_with?('bin/', 'Gemfile', '.gitignore', '.rubocop.yml')
     end
@@ -34,14 +34,14 @@ Gem::Specification.new do |spec|
   spec.metadata['rubocop_extension'] = 'true'
 
   # Dependencies
-  spec.add_dependency 'lint_roller', '~> 1.1'
-  spec.add_dependency 'rubocop', '~> 1.72', '>= 1.72.0'
-  spec.add_dependency 'rubocop-capybara', '~> 2.22'
-  spec.add_dependency 'rubocop-factory_bot', '~> 2.27'
-  spec.add_dependency 'rubocop-performance', '~> 1.25'
-  spec.add_dependency 'rubocop-rails', '~> 2.33'
-  spec.add_dependency 'rubocop-rspec', '~> 3.7'
-  spec.add_dependency 'rubocop-rspec_rails', '~> 2.31'
+  spec.add_dependency 'lint_roller'
+  spec.add_dependency 'rubocop'
+  spec.add_dependency 'rubocop-capybara'
+  spec.add_dependency 'rubocop-factory_bot'
+  spec.add_dependency 'rubocop-performance'
+  spec.add_dependency 'rubocop-rails'
+  spec.add_dependency 'rubocop-rspec'
+  spec.add_dependency 'rubocop-rspec_rails'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
