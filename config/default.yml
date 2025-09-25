@@ -96,6 +96,10 @@ Rails/UnknownEnv:
     - test
     - staging
 
+RSpec/ScatteredSetup:
+  Exclude:
+    - spec/requests/api/**/*_spec.rb
+
 RSpec/MultipleExpectations:
   Enabled: false
 

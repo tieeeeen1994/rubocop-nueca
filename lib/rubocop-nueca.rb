@@ -6,7 +6,9 @@ require 'rubocop'
 # Load the plugin
 require_relative 'rubocop/nueca/plugin'
 
-# Load all custom Rails cops
-Dir[File.join(__dir__, 'rubocop', 'cop', 'rails', '*.rb')].each do |file|
-  require file
+# Load all custom cops
+['rails', 'rswag'].each do |subdir|
+  Dir[File.join(__dir__, 'rubocop', 'cop', subdir, '*.rb')].each do |file|
+    require file
+  end
 end
