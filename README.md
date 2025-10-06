@@ -18,7 +18,7 @@ Add to your `.rubocop.yml` the following code.
 
 ```yaml
 plugins:
-    - rubocop-nueca
+  - rubocop-nueca
 ```
 
 ## License
