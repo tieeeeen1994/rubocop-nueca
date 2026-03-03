@@ -93,8 +93,7 @@ module RuboCop
         end
 
         def check_group_sorting(group_associations)
-          through_associations = group_associations.select { |assoc| assoc[:through] }
-          regular_associations = group_associations.reject { |assoc| assoc[:through] }
+          through_associations, regular_associations = group_associations.partition { |assoc| assoc[:through] }
 
           regular_sorted = regular_associations.sort_by { |assoc| assoc[:name] }
 
@@ -118,11 +117,11 @@ module RuboCop
         end
 
         def build_association_lookup(associations)
-          associations.each_with_object({}) { |assoc, lookup| lookup[assoc[:name]] = assoc } # rubocop:disable Rails/IndexBy
+          associations.to_h { |assoc| [assoc[:name], assoc] } # rubocop:disable Rails/IndexBy
         end
 
         def build_dependency_graph(associations, lookup)
-          graph = associations.each_with_object({}) { |assoc, deps| deps[assoc[:name]] = [] }
+          graph = associations.to_h { |assoc| [assoc[:name], []] }
 
           associations.each do |assoc|
             graph[assoc[:through]] << assoc[:name] if assoc[:through] && lookup[assoc[:through]]
@@ -147,7 +146,7 @@ module RuboCop
         end
 
         def calculate_in_degrees(dependency_graph, all_nodes)
-          in_degrees = all_nodes.each_with_object({}) { |node, degrees| degrees[node] = 0 }
+          in_degrees = all_nodes.to_h { |node| [node, 0] }
 
           dependency_graph.each_value do |dependents|
             dependents.each { |dependent| in_degrees[dependent] += 1 }
