@@ -30,14 +30,14 @@ Metrics/ClassLength:
   CountComments: false
   CountAsOne: [array, hash, heredoc, method_call]
   Exclude:
-    - 'db/migrate/**/*'
+    - 'db/*migrate/**/*'
 
 Metrics/MethodLength:
   Max: 20
   CountComments: false
   CountAsOne: [array, hash, heredoc, method_call]
   Exclude:
-    - 'db/migrate/**/*'
+    - 'db/*migrate/**/*'
 
 Metrics/ModuleLength:
   CountComments: false
@@ -191,3 +191,7 @@ Style/TopLevelMethodDefinition:
 Style/TrailingCommaInBlockArgs:
   Enabled: true
   EnforcedStyleForMultiline: no_comma
+
+RSpec/ExpectInHook:
+  Exclude:
+    - 'spec/features/**/*_spec.rb'
